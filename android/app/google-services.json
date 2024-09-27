@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "603170471228",
+    "project_id": "legal-info-app",
+    "storage_bucket": "legal-info-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:603170471228:android:1f47d24fdfc39602763239",
+        "android_client_info": {
+          "package_name": "com.example.legal_info_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9NjXsEEhhXcsZ4_6EYhJFeoYAQl_jMSE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
