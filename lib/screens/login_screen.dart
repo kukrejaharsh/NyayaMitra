@@ -102,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           controller: _emailController,
                           decoration: const InputDecoration(
                             labelText: 'Email',
-                            hintText: 'Enter your email (@nyayamitra.com)',
+                            hintText: 'BatchNumber@nyayamitra.com',
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.all(10),
                           ),

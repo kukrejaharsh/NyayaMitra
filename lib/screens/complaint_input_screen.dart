@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:legal_info_app/screens/section_suggestion_screen.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:intl/intl.dart'; // For date formatting
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,6 +21,7 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
   final TextEditingController _fathersHusbandsNameController = TextEditingController();
   final TextEditingController _occupationController = TextEditingController();
   final TextEditingController _incidentDetailsController = TextEditingController(); // Incident Details Controller
+   final TextEditingController _sectionsAppliedController = TextEditingController(); // Sections Applied Controller
 
   final FlutterTts _flutterTts = FlutterTts();
   late stt.SpeechToText _speechToText;
@@ -71,6 +73,9 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
               break;
             case 'incidentDetails':
               _incidentDetailsController.text = val.recognizedWords;
+              break;
+            case 'sectionsApplied':
+              _sectionsAppliedController.text = val.recognizedWords; // Added for Sections Applied
               break;
           }
         });
@@ -140,7 +145,8 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
         _timeOfIncident != null &&
         _locationController.text.isNotEmpty &&
         _addressController.text.isNotEmpty &&
-        _incidentDetailsController.text.isNotEmpty && // Check Incident Details
+        _incidentDetailsController.text.isNotEmpty  && // Check Incident Details
+        _sectionsAppliedController.text.isNotEmpty && // Check Sections Applied
         _isValidPhoneNumber(_phoneNumberController.text) &&
         _firNumberController.text.isNotEmpty &&
         _fathersHusbandsNameController.text.isNotEmpty &&
@@ -150,7 +156,11 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
       _saveComplaintToFirestore();
 
       // Navigate to the next screen after saving
-      // Add your navigation logic here if needed
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ComplaintInputScreen()),
+      );
+      
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Please enter all the mandatory details.')));
@@ -174,6 +184,7 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
       'dateOfReport': _dateOfReport,
       'fathersHusbandsName': _fathersHusbandsNameController.text.trim(),
       'occupation': _occupationController.text.trim(),
+      'sectionsApplied': _sectionsAppliedController.text.trim(), // Save Sections Applied
     };
 
     try {
@@ -208,174 +219,204 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
     }
   }
   
+    Future<void> _navigateToSectionSuggestion() async {
+    final selectedSection = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SectionSuggestionScreen()),
+    );
+    if (selectedSection != null) {
+      setState(() {
+        _sectionsAppliedController.text = selectedSection; // Update the text field with selected section
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Enter Complaint Details')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // FIR Registration Form Title with Underline
-              const Text(
-                'FIR Registration Form',
+  return Scaffold(
+    appBar: AppBar(title: const Text('Enter Complaint Details')),
+    body: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // FIR Registration Form Title with Underline
+            const Text(
+              'FIR Registration Form',
+              style: TextStyle(
+                fontSize: 20, 
+                fontWeight: FontWeight.bold, 
+                decoration: TextDecoration.underline,
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Date of Report
+            Text(
+              'Date of Report: $_dateOfReport',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            const SizedBox(height: 10),
+            // FIR Number Input
+            _buildTextField(
+              label: 'FIR Number',
+              controller: _firNumberController,
+              field: 'firNumber',
+            ),
+            const SizedBox(height: 20),
+            // Complainant Details shifted to left
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Complainant Details',
                 style: TextStyle(
-                  fontSize: 20, 
+                  fontSize: 18, 
                   fontWeight: FontWeight.bold, 
-                  decoration: TextDecoration.underline,
                 ),
               ),
-              const SizedBox(height: 20),
-              // Date of Report
-              Text(
-                'Date of Report: $_dateOfReport',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            const SizedBox(height: 20),
+            // Complainant Name Input
+            _buildTextField(
+              label: 'Complainant Name',
+              controller: _complainantNameController,
+              field: 'name',
+            ),
+            const SizedBox(height: 20),
+            // Complainant Date of Birth Input
+            _buildDatePicker(
+              label: 'Date of Birth',
+              selectedDate: _dobOfComplainant,
+              onTap: () => _selectDate(context),
+            ),
+            const SizedBox(height: 10), // Add space before the age display
+
+            // Display calculated age
+            Text(
+              'Age: ${_calculateAge()} years old',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 10),
-              // FIR Number Input
-              _buildTextField(
-                label: 'FIR Number',
-                controller: _firNumberController,
-                field: 'firNumber',
-              ),
-              const SizedBox(height: 20),
-              // Complainant Details shifted to left
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Complainant Details',
-                  style: TextStyle(
-                    fontSize: 18, 
-                    fontWeight: FontWeight.bold, 
-                  ),
+            ),
+            const SizedBox(height: 20), // Add some spacing after the age display
+
+            // Gender Selection
+            const Text(
+              'Gender',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            DropdownButton<String>(
+              value: _selectedGender,
+              items: <String>['Male', 'Female', 'Other']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  _selectedGender = newValue!;
+                });
+              },
+            ),
+            const SizedBox(height: 20),
+            // Address Input
+            _buildTextField(
+              label: 'Address',
+              controller: _addressController,
+              field: 'address',
+            ),
+            const SizedBox(height: 20),
+            // Phone Number Input
+            _buildTextField(
+              label: 'Phone Number',
+              controller: _phoneNumberController,
+              field: 'phoneNumber',
+              keyboardType: TextInputType.phone,
+            ),
+            const SizedBox(height: 20),
+            // Father's/Husband's Name Input
+            _buildTextField(
+              label: 'Father\'s/Husband\'s Name',
+              controller: _fathersHusbandsNameController,
+              field: 'fathersHusbandsName',
+            ),
+            const SizedBox(height: 20),
+            // Occupation Input
+            _buildTextField(
+              label: 'Occupation',
+              controller: _occupationController,
+              field: 'occupation',
+            ),
+            const SizedBox(height: 20),
+            // Complainant Details shifted to left
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Incident Details',
+                style: TextStyle(
+                  fontSize: 18, 
+                  fontWeight: FontWeight.bold, 
                 ),
               ),
-              const SizedBox(height: 20),
-              // Complainant Name Input
-              _buildTextField(
-                label: 'Complainant Name',
-                controller: _complainantNameController,
-                field: 'name',
-              ),
-              const SizedBox(height: 20),
-              // Complainant Date of Birth Input
-              _buildDatePicker(
-                label: 'Date of Birth',
-                selectedDate: _dobOfComplainant,
-                onTap: () => _selectDate(context),
-              ),
-              const SizedBox(height: 20),
-              // Gender Selection
-              const Text(
-                'Gender',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              DropdownButton<String>(
-                value: _selectedGender,
-                items: <String>['Male', 'Female', 'Other']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedGender = newValue!;
-                  });
-                },
-              ),
-              const SizedBox(height: 20),
-              // Address Input
-              _buildTextField(
-                label: 'Address',
-                controller: _addressController,
-                field: 'address',
-              ),
-              const SizedBox(height: 20),
-              // Phone Number Input
-              _buildTextField(
-                label: 'Phone Number',
-                controller: _phoneNumberController,
-                field: 'phoneNumber',
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: 20),
-              // Father's/Husband's Name Input
-              _buildTextField(
-                label: 'Father\'s/Husband\'s Name',
-                controller: _fathersHusbandsNameController,
-                field: 'fathersHusbandsName',
-              ),
-              const SizedBox(height: 20),
-              // Occupation Input
-              _buildTextField(
-                label: 'Occupation',
-                controller: _occupationController,
-                field: 'occupation',
-              ),
-              const SizedBox(height: 20),
-              // Complainant Details shifted to left
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Incident Details',
-                  style: TextStyle(
-                    fontSize: 18, 
-                    fontWeight: FontWeight.bold, 
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Date of Incident Input
-              _buildDatePicker(
-                label: 'Date of Incident',
-                selectedDate: _dateOfIncident,
-                onTap: () => _selectIncidentDate(context),
-              ),
-              const SizedBox(height: 20),
-              // Time of Incident Input
-              _buildTimePicker(
-                label: 'Time of Incident',
-                selectedTime: _timeOfIncident,
-                onTap: () => _selectTime(context),
-              ),
-              const SizedBox(height: 20),
-              // Location Input
-              _buildTextField(
-                label: 'Location Of Incident',
-                controller: _locationController,
-                field: 'location',
-              ),
-              const SizedBox(height: 20),
-              // Incident Details Input
-              _buildTextField(
-                label: 'Incident Details',
-                controller: _incidentDetailsController,
-                field: 'incidentDetails',
-                maxLines: 5,
-              ),
-              const SizedBox(height: 20),
-              // Speak Complaint Button
-              ElevatedButton(
-                onPressed: _speakComplaint,
-                child: const Text('Speak Complaint'),
-              ),
-              const SizedBox(height: 20),
-              // Submit Complaint Button
-              ElevatedButton(
-                onPressed: _submitComplaint,
-                child: const Text('Submit Complaint'),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 20),
+            // Date of Incident Input
+            _buildDatePicker(
+              label: 'Date of Incident',
+              selectedDate: _dateOfIncident,
+              onTap: () => _selectIncidentDate(context),
+            ),
+            const SizedBox(height: 20),
+            // Time of Incident Input
+            _buildTimePicker(
+              label: 'Time of Incident',
+              selectedTime: _timeOfIncident,
+              onTap: () => _selectTime(context),
+            ),
+            const SizedBox(height: 20),
+            // Location Input
+            _buildTextField(
+              label: 'Location Of Incident',
+              controller: _locationController,
+              field: 'location',
+            ),
+            const SizedBox(height: 20),
+            // Incident Details Input
+            _buildTextField(
+              label: 'Incident Details',
+              controller: _incidentDetailsController,
+              field: 'incidentDetails',
+              maxLines: 5,
+            ),
+            const SizedBox(height: 20),
+            // Sections Applied Input
+            _buildSectionsPicker(
+              label: 'Sections Applied',
+              selectedSection: _sectionsAppliedController.text,
+              onTap: _navigateToSectionSuggestion, // Navigate to section suggestion
+            ),
+            const SizedBox(height: 20),
+            // Speak Complaint Button
+            ElevatedButton(
+              onPressed: _speakComplaint,
+              child: const Text('Speak Complaint'),
+            ),
+            const SizedBox(height: 20),
+            // Submit Complaint Button
+            ElevatedButton(
+              onPressed: _submitComplaint,
+              child: const Text('Submit Complaint'),
+            ),
+          ],
         ),
       ),
-    );
+    ),
+  );
   }
+
 
 
   Widget _buildTimePicker({
@@ -464,3 +505,36 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
 }
 
 
+Widget _buildSectionsPicker({
+  required String label,
+  required String? selectedSection,
+  required VoidCallback onTap,
+}) {
+  return Container(
+    padding: const EdgeInsets.all(8.0),
+    decoration: BoxDecoration(
+      border: Border.all(color: Colors.grey),
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Text widget to display selected sections
+        Expanded(
+          child: Text(
+            '$label: ${selectedSection != null && selectedSection.isNotEmpty ? selectedSection : 'Select Section'}',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+            maxLines: 3, // Limit to 3 lines
+            overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
+            softWrap: true, // Allow text to wrap
+          ),
+        ),
+        const SizedBox(width: 8), // Add some spacing between text and button
+        ElevatedButton(
+          onPressed: onTap,
+          child: const Text('Pick Section'),
+        ),
+      ],
+    ),
+  );
+}

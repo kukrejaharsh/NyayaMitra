@@ -42,105 +42,109 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final RegExp passwordRegExp = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[-_.]).{8,}$');
     return passwordRegExp.hasMatch(password);
   }
-
-  Future<void> _register() async {
-    if (!_isValidName(_nameController.text.trim())) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Name must contain only alphabets and cannot be empty')),
-      );
-      return;
-    }
-
-    if (!_isValidBatchNumber(_batchNumberController.text.trim())) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Batch number must be a numerical value')),
-      );
-      return;
-    }
-
-    if (!_isValidPhoneNumber(_phoneNumberController.text.trim())) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Phone number must be exactly 10 digits')),
-      );
-      return;
-    }
-
-    if (!_isValidStationId(_stationIdController.text.trim())) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Station ID must be a numerical value')),
-      );
-      return;
-    }
-
-    if (!_isValidRank(_rankController.text.trim())) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Rank must contain only alphabets and cannot be empty')),
-      );
-      return;
-    }
-
-    if (!_isValidPassword(_passwordController.text.trim())) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (-, _, .)')),
-      );
-      return;
-    }
-
-    if (_passwordController.text.trim() != _confirmPasswordController.text.trim()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Passwords do not match')),
-      );
-      return;
-    }
-
-    try {
-      final authService = Provider.of<AuthService>(context, listen: false);
-      await authService.register(
-        email: "${_batchNumberController.text}@nyayamitra.com",
-        password: _passwordController.text.trim(),
-        name: _nameController.text.trim(),
-        batchNumber: _batchNumberController.text.trim(),
-        phoneNumber: _phoneNumberController.text.trim(),
-        stationId: _stationIdController.text.trim(),
-        rank: _rankController.text.trim(),
-      );
-
-      // Save user details to Firestore
-      await _saveUserToFirestore();
-
-      // Navigate to LoginScreen after successful registration
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registration failed: $e')),
-      );
-    }
+Future<void> _register() async {
+  if (!_isValidName(_nameController.text.trim())) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Name must contain only alphabets and cannot be empty')),
+    );
+    return;
   }
+
+  if (!_isValidBatchNumber(_batchNumberController.text.trim())) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Batch number must be a numerical value')),
+    );
+    return;
+  }
+
+  if (!_isValidPhoneNumber(_phoneNumberController.text.trim())) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Phone number must be exactly 10 digits')),
+    );
+    return;
+  }
+
+  if (!_isValidStationId(_stationIdController.text.trim())) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Station ID must be a numerical value')),
+    );
+    return;
+  }
+
+  if (!_isValidRank(_rankController.text.trim())) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Rank must contain only alphabets and cannot be empty')),
+    );
+    return;
+  }
+
+  if (!_isValidPassword(_passwordController.text.trim())) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (-, _, .)')),
+    );
+    return;
+  }
+
+  if (_passwordController.text.trim() != _confirmPasswordController.text.trim()) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Passwords do not match')),
+    );
+    return;
+  }
+
+  try {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final userCredential = await authService.register(
+      email: "${_batchNumberController.text}@nyayamitra.com",
+      password: _passwordController.text.trim(),
+      name: _nameController.text.trim(),
+      batchNumber: _batchNumberController.text.trim(),
+      phoneNumber: _phoneNumberController.text.trim(),
+      stationId: _stationIdController.text.trim(),
+      rank: _rankController.text.trim(),
+    );
+
+  
+
+    // Save user details to Firestore using UID as the document ID
+    await _saveUserToFirestore();
+
+    // Navigate to LoginScreen after successful registration
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Registration failed: $e')),
+    );
+  }
+}
+
 
   Future<void> _saveUserToFirestore() async {
-    final Map<String, dynamic> userData = {
-      'name': _nameController.text.trim(),
-      'batchNumber': int.parse(_batchNumberController.text.trim()),
-      'phoneNumber': _phoneNumberController.text.trim(),
-      'stationId': int.parse(_stationIdController.text.trim()),
-      'rank': _rankController.text.trim(),
-      'email': "${_batchNumberController.text}@nyayamitra.com",
-    };
+  final Map<String, dynamic> userData = {
+    'name': _nameController.text.trim(),
+    'batchNumber': int.parse(_batchNumberController.text.trim()),
+    'phoneNumber': _phoneNumberController.text.trim(),
+    'stationId': int.parse(_stationIdController.text.trim()),
+    'rank': _rankController.text.trim(),
+    'email': "${_batchNumberController.text}@nyayamitra.com",
+  };
 
-    try {
-      await FirebaseFirestore.instance.collection('users').doc(_batchNumberController.text.trim()).set(userData);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('User details successfully saved!')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to save user details.')),
-      );
-    }
+  try {
+    // Use the userId (UID) as the document ID in Firestore
+    await FirebaseFirestore.instance.collection('users').get();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('User details successfully saved!')),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Failed to save user details.')),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +191,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
-
   // Helper method to build a TextField with consistent styling
   Widget _buildTextField(
     TextEditingController controller,
