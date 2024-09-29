@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:legal_info_app/widgets/drawer_menu.dart';
-import '../widgets/custom_app_bar.dart';
 import 'profile_screen.dart';
 import 'legal_sections_screen.dart';
 
@@ -48,9 +47,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Determine if the current theme is dark
+    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dashboard'),
+        iconTheme: IconThemeData(color: isDarkTheme ? Colors.white : Colors.black), // Set icon color
         actions: [
           IconButton(
             icon: const Icon(Icons.person),
@@ -80,7 +83,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           const SizedBox(height: 20),
           // Welcome message
           const Text(
-            'Welcome to LEGAL-INFO-APP',
+            'Welcome to NyayaMitra',
             style: TextStyle(fontSize: 20),
           ),
           const SizedBox(height: 20),

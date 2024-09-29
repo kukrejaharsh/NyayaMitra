@@ -84,6 +84,7 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
     });
     _speechToText.stop();
   }
+  
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -125,6 +126,8 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
     }
   }
 
+  
+
   bool _isValidPhoneNumber(String phoneNumber) {
     final RegExp phoneRegExp = RegExp(r'^\d{10}$');
     return phoneRegExp.hasMatch(phoneNumber);
@@ -145,7 +148,6 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
 
       // Save the complaint details to Firestore
       _saveComplaintToFirestore();
-
 
       // Navigate to the next screen after saving
       // Add your navigation logic here if needed
@@ -205,6 +207,7 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
           const SnackBar(content: Text('Please enter the incident details first')));
     }
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -247,84 +250,75 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
                   style: TextStyle(
                     fontSize: 18, 
                     fontWeight: FontWeight.bold, 
-                    color: Colors.blue,
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
-              // Complainant Name
+              const SizedBox(height: 20),
+              // Complainant Name Input
               _buildTextField(
                 label: 'Complainant Name',
                 controller: _complainantNameController,
                 field: 'name',
               ),
-              const SizedBox(height: 10),
-              // Date of Birth
-              Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: () => _selectDate(context),
-                    child: const Text('Select DOB'),
-                  ),
-                  const SizedBox(width: 20),
-                  Text(
-                    _dobOfComplainant != null
-                        ? 'Selected DOB: ${DateFormat('dd-MM-yyyy').format(_dobOfComplainant!)}'
-                        : 'No DOB selected',
-                  ),
-                ],
+              const SizedBox(height: 20),
+              // Complainant Date of Birth Input
+              _buildDatePicker(
+                label: 'Date of Birth',
+                selectedDate: _dobOfComplainant,
+                onTap: () => _selectDate(context),
               ),
-              const SizedBox(height: 10),
-              // Age Display
-              Text(
-                'Age: ${_calculateAge()}',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              const SizedBox(height: 20),
+              // Gender Selection
+              const Text(
+                'Gender',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 10),
-              // Gender Dropdown
-              Row(
-                children: [
-                  const Text('Gender: ', style: TextStyle(fontSize: 16)),
-                  DropdownButton<String>(
-                    value: _selectedGender,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedGender = newValue!;
-                      });
-                    },
-                    items: <String>['Male', 'Female', 'Others']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ],
+              DropdownButton<String>(
+                value: _selectedGender,
+                items: <String>['Male', 'Female', 'Other']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedGender = newValue!;
+                  });
+                },
               ),
-              const SizedBox(height: 10),
-              // Address
+              const SizedBox(height: 20),
+              // Address Input
               _buildTextField(
                 label: 'Address',
                 controller: _addressController,
                 field: 'address',
               ),
-              const SizedBox(height: 10),
-              // Father's/Husband's Name
+              const SizedBox(height: 20),
+              // Phone Number Input
+              _buildTextField(
+                label: 'Phone Number',
+                controller: _phoneNumberController,
+                field: 'phoneNumber',
+                keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 20),
+              // Father's/Husband's Name Input
               _buildTextField(
                 label: 'Father\'s/Husband\'s Name',
                 controller: _fathersHusbandsNameController,
                 field: 'fathersHusbandsName',
               ),
-              const SizedBox(height: 10),
-              // Occupation
+              const SizedBox(height: 20),
+              // Occupation Input
               _buildTextField(
                 label: 'Occupation',
                 controller: _occupationController,
                 field: 'occupation',
               ),
               const SizedBox(height: 20),
-              // Incident Details shifted to left
+              // Complainant Details shifted to left
               const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -332,75 +326,49 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
                   style: TextStyle(
                     fontSize: 18, 
                     fontWeight: FontWeight.bold, 
-                    color: Colors.blue,
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
-              // Incident Date
-              Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: () => _selectIncidentDate(context),
-                    child: const Text('Date of Incident'),
-                  ),
-                  const SizedBox(width: 20),
-                  Text(
-                    _dateOfIncident != null
-                        ? ': ${DateFormat('dd-MM-yyyy').format(_dateOfIncident!)}'
-                        : 'No Date selected',
-                  ),
-                ],
+              const SizedBox(height: 20),
+              // Date of Incident Input
+              _buildDatePicker(
+                label: 'Date of Incident',
+                selectedDate: _dateOfIncident,
+                onTap: () => _selectIncidentDate(context),
               ),
-              const SizedBox(height: 10),
-              // Incident Time
-              Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: () => _selectTime(context),
-                    child: const Text('Time of Incident'),
-                  ),
-                  const SizedBox(width: 20),
-                  Text(
-                    _timeOfIncident != null
-                        ? ': ${_timeOfIncident!.format(context)}'
-                        : 'No Time selected',
-                  ),
-                ],
+              const SizedBox(height: 20),
+              // Time of Incident Input
+              _buildTimePicker(
+                label: 'Time of Incident',
+                selectedTime: _timeOfIncident,
+                onTap: () => _selectTime(context),
               ),
-              const SizedBox(height: 10),
-              // Location
+              const SizedBox(height: 20),
+              // Location Input
               _buildTextField(
-                label: 'Location',
+                label: 'Location Of Incident',
                 controller: _locationController,
                 field: 'location',
               ),
-              const SizedBox(height: 10),
-              // Phone Number
-              _buildTextField(
-                label: 'Phone Number',
-                controller: _phoneNumberController,
-                field: 'phoneNumber',
-              ),
-              const SizedBox(height: 10),
-              // Incident Details TextField
+              const SizedBox(height: 20),
+              // Incident Details Input
               _buildTextField(
                 label: 'Incident Details',
                 controller: _incidentDetailsController,
                 field: 'incidentDetails',
                 maxLines: 5,
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
               // Speak Complaint Button
               ElevatedButton(
                 onPressed: _speakComplaint,
                 child: const Text('Speak Complaint'),
               ),
               const SizedBox(height: 20),
-              // Submit Button
+              // Submit Complaint Button
               ElevatedButton(
                 onPressed: _submitComplaint,
-                child: const Text('Submit'),
+                child: const Text('Submit Complaint'),
               ),
             ],
           ),
@@ -409,37 +377,90 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
     );
   }
 
-   Widget _buildTextField({
+
+  Widget _buildTimePicker({
+  required String label,
+  required TimeOfDay? selectedTime,
+  required VoidCallback onTap,
+}) {
+  return Container(
+    padding: const EdgeInsets.all(8.0),
+    decoration: BoxDecoration(
+      border: Border.all(color: Colors.grey),
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          '$label: ${selectedTime != null ? selectedTime.format(context) : 'Select Time'}',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        ElevatedButton(
+          onPressed: onTap,
+          child: const Text('Pick Time'),
+        ),
+      ],
+    ),
+  );
+}
+
+  Widget _buildTextField({
     required String label,
     required TextEditingController controller,
     required String field,
-    bool highlight = false,
-    bool enabled = true,
-    int? maxLines,
-    int? minLines,
+    TextInputType keyboardType = TextInputType.text,
+    int maxLines = 1,
   }) {
     return Container(
+      padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        border: Border.all(color: highlight ? Colors.blue : Colors.grey), // Highlight if needed
+        border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(8.0),
       ),
-      child: TextField(
-        controller: controller,
-        enabled: enabled,
-        maxLines: maxLines,
-        minLines: minLines,
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-        suffixIcon: IconButton(
-          icon: Icon(_isListening ? Icons.mic : Icons.mic_none),
-          onPressed: () {
-            _isListening ? _stopListening() : _startListening(field);
-          },
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+          TextField(
+            controller: controller,
+            keyboardType: keyboardType,
+            maxLines: maxLines,
+            onTap: () {
+              _startListening(field);
+            },
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget _buildDatePicker({
+    required String label,
+    required DateTime? selectedDate,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            '$label: ${selectedDate != null ? DateFormat('dd-MM-yyyy').format(selectedDate) : 'Select Date'}',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          ElevatedButton(
+            onPressed: onTap,
+            child: const Text('Pick Date'),
+          ),
+        ],
       ),
     );
   }
 }
+
 

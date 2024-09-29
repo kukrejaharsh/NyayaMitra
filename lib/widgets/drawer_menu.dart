@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:legal_info_app/constants/theme.dart';
+import 'package:legal_info_app/screens/login_screen.dart';
+import 'package:provider/provider.dart';
 import '../screens/profile_screen.dart';
 import '../screens/complaint_input_screen.dart';
 import '../screens/legal_sections_screen.dart';
 import '../screens/case_summary_screen.dart';
+import '../services/auth_service.dart'; // Import your AuthService for sign out
+
 
 class DrawerMenu extends StatelessWidget {
   const DrawerMenu({super.key});
@@ -14,7 +19,7 @@ class DrawerMenu extends StatelessWidget {
         children: [
           const DrawerHeader(
             decoration: BoxDecoration(color: Colors.blue),
-            child: Text('LEGAL-INFO-APP'),
+            child: Text('LEGAL-INFO-APP', style: TextStyle(color: Colors.white, fontSize: 24)),
           ),
           ListTile(
             leading: const Icon(Icons.person),
@@ -43,6 +48,37 @@ class DrawerMenu extends StatelessWidget {
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const CaseSummaryScreen()));
             },
+          ),
+          // Settings Dropdown Menu
+          ExpansionTile(
+            leading: const Icon(Icons.settings),
+            title: const Text('Settings'),
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.brightness_6),
+                title: const Text('Change Theme'),
+                onTap: () {
+                  // Toggle the theme using ThemeNotifier
+                  Provider.of<ThemeNotifier>(context, listen: false).toggleTheme();
+                  Navigator.pop(context);  // Close drawer after the theme change
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.logout),
+                title: const Text('Sign Out'),
+                onTap: () {
+                  // Call sign out method from AuthService
+                  Provider.of<AuthService>(context, listen: false).signOut();
+                  
+                  // Navigate to login screen after signing out
+                  Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const LoginScreen()),
+                          );
+                },
+              ),
+
+            ],
           ),
         ],
       ),
