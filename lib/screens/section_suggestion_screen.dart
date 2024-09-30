@@ -5,51 +5,70 @@ class SectionSuggestionScreen extends StatefulWidget {
   const SectionSuggestionScreen({super.key});
 
   @override
-  _SectionSuggestionScreenState createState() => _SectionSuggestionScreenState();
+  _SectionSuggestionScreenState createState() =>
+      _SectionSuggestionScreenState();
 }
 
 class _SectionSuggestionScreenState extends State<SectionSuggestionScreen> {
   final FlutterTts _flutterTts = FlutterTts();
   final List<Map<String, String>> _sections = [
     {
-      'section': '44. Right of private defence against deadly assault when there is risk of harm to innocent person.',
-      'description': 'Provides protection against deadly attacks posing risk to innocents.'
+      'section':
+          '44. Right of private defence against deadly assault when there is risk of harm to innocent person.',
+      'description':
+          'Provides protection against deadly attacks posing risk to innocents.'
     },
     {
-      'section': '73. Assault or criminal force to woman with intent to outrage her modesty.',
-      'description': 'Covers acts of violence or force aimed at degrading a woman’s dignity.'
+      'section':
+          '73. Assault or criminal force to woman with intent to outrage her modesty.',
+      'description':
+          'Covers acts of violence or force aimed at degrading a woman’s dignity.'
     },
     {
-      'section': '75. Assault or use of criminal force to woman with intent to disrobe.',
-      'description': 'Details punishments for assaults aimed at disrobing a woman.'
+      'section':
+          '75. Assault or use of criminal force to woman with intent to disrobe.',
+      'description':
+          'Details punishments for assaults aimed at disrobing a woman.'
     },
     {
       'section': '128. Assault.',
-      'description': 'Defines assault and the legal ramifications of such actions.'
+      'description':
+          'Defines assault and the legal ramifications of such actions.'
     },
     {
-      'section': '129. Punishment for assault or criminal force otherwise than on grave provocation.',
-      'description': 'Outlines penalties for assault not provoked by grave circumstances.'
+      'section':
+          '129. Punishment for assault or criminal force otherwise than on grave provocation.',
+      'description':
+          'Outlines penalties for assault not provoked by grave circumstances.'
     },
     {
-      'section': '130. Assault or criminal force to deter public servant from discharge of his duty.',
-      'description': 'Covers penalties for obstructing public servants in their duties through force.'
+      'section':
+          '130. Assault or criminal force to deter public servant from discharge of his duty.',
+      'description':
+          'Covers penalties for obstructing public servants in their duties through force.'
     },
     {
-      'section': '131. Assault or criminal force with intent to dishonor person, otherwise than on grave provocation.',
-      'description': 'Details legal consequences for assault aimed at dishonoring individuals.'
+      'section':
+          '131. Assault or criminal force with intent to dishonor person, otherwise than on grave provocation.',
+      'description':
+          'Details legal consequences for assault aimed at dishonoring individuals.'
     },
     {
-      'section': '132. Assault or criminal force in attempt to commit theft of property carried by a person.',
-      'description': 'Defines penalties for assault during theft attempts involving physical property.'
+      'section':
+          '132. Assault or criminal force in attempt to commit theft of property carried by a person.',
+      'description':
+          'Defines penalties for assault during theft attempts involving physical property.'
     },
     {
-      'section': '133. Assault or criminal force in attempt wrongfully to confine a person.',
-      'description': 'Covers legal implications for using force to wrongfully confine individuals.'
+      'section':
+          '133. Assault or criminal force in attempt wrongfully to confine a person.',
+      'description':
+          'Covers legal implications for using force to wrongfully confine individuals.'
     },
     {
       'section': '134. Assault or criminal force on grave provocation.',
-      'description': 'Specifies legal repercussions for assault committed under grave provocation.'
+      'description':
+          'Specifies legal repercussions for assault committed under grave provocation.'
     },
   ];
 
@@ -90,14 +109,17 @@ class _SectionSuggestionScreenState extends State<SectionSuggestionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Suggested Legal Sections',
-        style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 227, 227, 247),
-                          ),
+      appBar: AppBar(
+        title: const Text(
+          'Suggested Legal Sections',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Color.fromARGB(255, 227, 227, 247),
+          ),
         ),
-        backgroundColor: const Color.fromARGB(255, 0, 51, 102),),
+        backgroundColor: const Color.fromARGB(255, 0, 51, 102),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -107,7 +129,8 @@ class _SectionSuggestionScreenState extends State<SectionSuggestionScreen> {
                 itemCount: _sections.length,
                 itemBuilder: (context, index) {
                   final section = _sections[index];
-                  final isSelected = _selectedSections.contains(section['section']);
+                  final isSelected =
+                      _selectedSections.contains(section['section']);
                   return Card(
                     child: ListTile(
                       title: Text(
@@ -117,9 +140,10 @@ class _SectionSuggestionScreenState extends State<SectionSuggestionScreen> {
                         ),
                       ),
                       subtitle: Text(section['description']!),
-                      tileColor: isSelected ? Colors.blue.withOpacity(0.3) : null,
-                      trailing: isSelected 
-                          ? const Icon(Icons.check, color: Colors.green) 
+                      tileColor:
+                          isSelected ? Colors.blue.withOpacity(0.3) : null,
+                      trailing: isSelected
+                          ? const Icon(Icons.check, color: Colors.green)
                           : null,
                       onTap: () {
                         _toggleSelection(section['section']!);
@@ -133,7 +157,8 @@ class _SectionSuggestionScreenState extends State<SectionSuggestionScreen> {
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue, // Background color
-                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20), // Increase padding
+                padding: const EdgeInsets.symmetric(
+                    vertical: 15, horizontal: 20), // Increase padding
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30), // Rounded corners
                 ),

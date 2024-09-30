@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:legal_info_app/screens/IPC_SuggestionScreen.dart';
 import 'package:legal_info_app/screens/section_suggestion_screen.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:intl/intl.dart'; // For date formatting
@@ -25,6 +26,8 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
   final TextEditingController _incidentDetailsController =
       TextEditingController(); // Incident Details Controller
   final TextEditingController _sectionsAppliedController =
+      TextEditingController(); // Sections Applied Controller
+  final TextEditingController _IPCsectionsAppliedController =
       TextEditingController(); // Sections Applied Controller
 
   final FlutterTts _flutterTts = FlutterTts();
@@ -80,6 +83,10 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
               break;
             case 'sectionsApplied':
               _sectionsAppliedController.text =
+                  val.recognizedWords; // Added for Sections Applied
+              break;
+            case 'IPCsectionsApplied':
+              _IPCsectionsAppliedController.text =
                   val.recognizedWords; // Added for Sections Applied
               break;
           }
@@ -181,8 +188,7 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
       'dateOfReport': _dateOfReport,
       'fathersHusbandsName': _fathersHusbandsNameController.text.trim(),
       'occupation': _occupationController.text.trim(),
-      'sectionsApplied':
-          _sectionsAppliedController.text.trim(), // Save Sections Applied
+      'sectionsApplied': _sectionsAppliedController.text.trim(), // Save Sections Applied
 
       // Save incident details in separate fields
       'dateOfIncident': _dateOfIncident != null
@@ -238,6 +244,19 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
       setState(() {
         _sectionsAppliedController.text =
             selectedSection; // Update the text field with selected section
+      });
+    }
+  }
+  Future<void> _navigateToIPCSuggestion() async {
+    final selectedIPCSection = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const IPCSuggestionScreen()),
+    );
+    if (  selectedIPCSection // Update the text field with selected section
+ != null) {
+      setState(() {
+        _IPCsectionsAppliedController.text =
+            selectedIPCSection; // Update the text field with selected section
       });
     }
   }
@@ -423,6 +442,14 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
                     _navigateToSectionSuggestion, // Navigate to section suggestion
               ),
               const SizedBox(height: 20),
+              // Sections Applied Input
+              _buildIPCPicker(
+                label: 'IPC Sections Applied',
+                selectedIPCSection: _IPCsectionsAppliedController.text,
+                onTap:
+                    _navigateToIPCSuggestion, // Navigate to section suggestion
+              ),
+              const SizedBox(height: 20),
               // Speak Complaint Button
               ElevatedButton.icon(
                 onPressed: _speakComplaint,
@@ -604,6 +631,51 @@ Widget _buildSectionsPicker({
   icon: const Icon(Icons.library_books, color: Colors.white),  // Add an icon
   label: const Text(
     'Pick Section',
+    style: TextStyle(fontWeight: FontWeight.bold,
+    color: Colors.white),
+  ),
+  style: ElevatedButton.styleFrom(
+    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20), // Add padding
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10), // Rounded corners
+    ),
+    backgroundColor: const Color.fromARGB(255, 2, 49, 96), // Dark blue color
+  ),
+),
+      ],
+    ),
+  );
+}
+Widget _buildIPCPicker({
+  required String label,
+  required String? selectedIPCSection,
+  required VoidCallback onTap,
+}) {
+  return Container(
+    padding: const EdgeInsets.all(8.0),
+    decoration: BoxDecoration(
+      border: Border.all(color: Colors.grey),
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Text widget to display selected sections
+        Expanded(
+          child: Text(
+            '$label: ${selectedIPCSection != null && selectedIPCSection.isNotEmpty ? selectedIPCSection : 'Select IPC Section'}',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+            maxLines: 3, // Limit to 3 lines
+            overflow: TextOverflow.ellipsis, // Handle overflow with ellipsis
+            softWrap: true, // Allow text to wrap
+          ),
+        ),
+        const SizedBox(width: 8), // Add some spacing between text and button
+        ElevatedButton.icon(
+  onPressed: onTap,
+  icon: const Icon(Icons.library_books, color: Colors.white),  // Add an icon
+  label: const Text(
+    'Pick IPC Section',
     style: TextStyle(fontWeight: FontWeight.bold,
     color: Colors.white),
   ),
