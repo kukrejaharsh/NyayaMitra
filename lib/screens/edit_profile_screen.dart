@@ -17,6 +17,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _stationIdController = TextEditingController();
   final TextEditingController _rankController = TextEditingController();
+  final TextEditingController _batchNumberController = TextEditingController(); // Added controller for Batch Number
 
   User? _user;
   Map<String, dynamic>? _userData;
@@ -42,6 +43,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           _phoneNumberController.text = _userData!['phoneNumber'] ?? '';
           _stationIdController.text = _userData!['stationId']?.toString() ?? '';
           _rankController.text = _userData!['rank'] ?? '';
+          _batchNumberController.text = _userData!['batchNumber']?.toString() ?? ''; // Set batch number
           setState(() {});
         }
       }
@@ -77,6 +79,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       return;
     }
 
+    // You can also validate batch number if needed
+    if (!_isValidBatchNumber(_batchNumberController.text.trim())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Batch Number must be a numerical value')),
+      );
+      return;
+    }
+
     try {
       if (_user != null) {
         // Update user data in Firestore using the UID
@@ -85,6 +95,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           'phoneNumber': _phoneNumberController.text.trim(),
           'stationId': _stationIdController.text.trim(),
           'rank': _rankController.text.trim(),
+          'batchNumber': _batchNumberController.text.trim(), // Update batch number
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -96,6 +107,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         _userData!['phoneNumber'] = _phoneNumberController.text.trim();
         _userData!['stationId'] = _stationIdController.text.trim();
         _userData!['rank'] = _rankController.text.trim();
+        _userData!['batchNumber'] = _batchNumberController.text.trim(); // Update local batch number
 
         // Pass updated data back to ProfileScreen
         Navigator.pop(context, _userData); // Pass updated data
@@ -123,35 +135,47 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return rank.isNotEmpty && RegExp(r'^[a-zA-Z ]+$').hasMatch(rank);
   }
 
+  bool _isValidBatchNumber(String batchNumber) {
+    return batchNumber.isNotEmpty; // You can add additional validation if needed
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Profile')),
+      appBar: AppBar(title: const Text('Edit Profile',
+        style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 227, 227, 247),
+                          ),
+        ),
+        backgroundColor: const Color.fromARGB(255, 0, 51, 102),),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 60),
               // Display Default Profile Picture
               const Center(
                 child: CircleAvatar(
-                  radius: 50,
+                  radius: 60,
                   backgroundImage: AssetImage('assets/default_profile_icon.png'),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 30),
 
               // Display batch number as a header/subtitle outside the card
               if (_userData != null && _userData!['batchNumber'] != null)
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
                   child: Text(
-                    '      Batch Number: ${_userData!['batchNumber']}',
+                    'Batch Number: ${_userData!['batchNumber']}',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(221, 55, 54, 54),
+                      color: Color.fromARGB(221, 0, 0, 0),
                     ),
                   ),
                 ),
@@ -170,6 +194,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       _buildTextField(_phoneNumberController, 'Phone Number', keyboardType: TextInputType.phone),
                       _buildTextField(_stationIdController, 'Station ID', keyboardType: TextInputType.number),
                       _buildTextField(_rankController, 'Rank'),
+                      _buildTextField(_batchNumberController, 'Batch Number', keyboardType: TextInputType.number), // Added batch number field
                     ],
                   ),
                 ),
@@ -177,15 +202,32 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               const SizedBox(height: 20),
 
               // Update Button
-              Center(
-                child: ElevatedButton(onPressed: _updateProfile, child: const Text('Update')),
-              ),
+Center(
+  child: Container(
+    width: double.infinity, // Make the button take full width
+    margin: const EdgeInsets.symmetric(vertical: 20), // Add vertical margin
+    child: ElevatedButton(
+      onPressed: _updateProfile,
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.white, backgroundColor: Colors.blue, padding: const EdgeInsets.symmetric(vertical: 16), // Add padding
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10), // Rounded corners
+        ), // Text color
+      ),
+      child: const Text(
+        'Update',
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // Custom text style
+      ),
+    ),
+  ),
+),
             ],
           ),
         ),
       ),
     );
   }
+
   // Helper method to build a TextField with consistent styling
   Widget _buildTextField(
     TextEditingController controller,

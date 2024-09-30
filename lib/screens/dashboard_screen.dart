@@ -16,14 +16,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   late Timer _timer;
   int _currentPage = 0;
 
- @override
+  @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: _currentPage);
 
     // Start the timer to automatically slide images
     _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
-      if (_currentPage < 2) {
+      if (_currentPage < 1) {
         _currentPage++;
       } else {
         _currentPage = 0;
@@ -51,7 +51,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        title: const Text('Home',
+        style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 227, 227, 247),
+                          ),
+        ),
+        backgroundColor: const Color.fromARGB(255, 0, 51, 102),
         iconTheme: IconThemeData(color: isDarkTheme ? Colors.white : Colors.black), // Set icon color
         actions: [
           IconButton(
@@ -68,23 +75,46 @@ class _DashboardScreenState extends State<DashboardScreen> {
       drawer: const DrawerMenu(),
       body: Column(
         children: [
-                SizedBox(
+          // Lion logo enclosed in a blue box
+          Container(
+            color: const Color.fromARGB(255, 9, 74, 153), // Set the background color to blue
+            padding: const EdgeInsets.all(10), // Add padding for aesthetics
+            width: double.infinity, // Make it full width
+            child: Center( // Center the image
+              child: Image.asset(
+                'assets/lion_logo.png',
+                height: 80, // Adjust the height as needed
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+          // Welcome message
+          const SizedBox(height: 20),
+          const Text(
+            'NAMASTE!! Welcome to NyayaMitra',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+          const SizedBox(height: 20),
+
+
+          const SizedBox(height: 20),
+
+          // Image slider
+          SizedBox(
             height: 150, // Set height for the slider
             child: PageView(
               controller: _pageController,
               children: [
                 Image.asset('assets/indian_flag.png', fit: BoxFit.cover),
-                Image.asset('assets/lion_logo.png', fit: BoxFit.contain),
                 Image.asset('assets/law_logo.png', fit: BoxFit.contain),
               ],
             ),
           ),
-          // Welcome message
-          const Text(
-            'Welcome to NyayaMitra',
-            style: TextStyle(fontSize: 20),
-          ),
           const SizedBox(height: 20),
+
           // Buttons to navigate to different sections
           ElevatedButton(
             onPressed: () => Navigator.push(

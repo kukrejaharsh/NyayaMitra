@@ -90,7 +90,14 @@ class _SectionSuggestionScreenState extends State<SectionSuggestionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Suggested Legal Sections')),
+      appBar: AppBar(title: const Text('Suggested Legal Sections',
+        style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 227, 227, 247),
+                          ),
+        ),
+        backgroundColor: const Color.fromARGB(255, 0, 51, 102),),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -103,7 +110,12 @@ class _SectionSuggestionScreenState extends State<SectionSuggestionScreen> {
                   final isSelected = _selectedSections.contains(section['section']);
                   return Card(
                     child: ListTile(
-                      title: Text(section['section']!),
+                      title: Text(
+                        section['section']!,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       subtitle: Text(section['description']!),
                       tileColor: isSelected ? Colors.blue.withOpacity(0.3) : null,
                       trailing: isSelected 
@@ -117,9 +129,25 @@ class _SectionSuggestionScreenState extends State<SectionSuggestionScreen> {
                 },
               ),
             ),
-            ElevatedButton(
+            const SizedBox(height: 16), // Add spacing before button
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue, // Background color
+                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20), // Increase padding
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30), // Rounded corners
+                ),
+                elevation: 5, // Add elevation
+              ),
               onPressed: _submitSelectedSections,
-              child: const Text('Submit Selected Sections'),
+              icon: const Icon(Icons.check), // Add icon to button
+              label: const Text(
+                'Submit Selected Sections',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white, // Text color
+                ),
+              ),
             ),
           ],
         ),

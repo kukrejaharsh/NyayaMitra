@@ -151,7 +151,14 @@ Future<void> _register() async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Register')),
+      appBar: AppBar(title: const Text('Register',
+        style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 227, 227, 247),
+                          ),
+        ),
+        backgroundColor: const Color.fromARGB(255, 0, 51, 102),),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(

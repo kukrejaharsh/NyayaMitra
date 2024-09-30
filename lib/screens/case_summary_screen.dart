@@ -36,11 +36,19 @@ class _CaseSummaryScreenState extends State<CaseSummaryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Case Summary'),
+        title: const Text('Case Summary',
+        style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 227, 227, 247),
+                          ),
+        ),
+        backgroundColor: const Color.fromARGB(255, 0, 51, 102), // Dark blue
       ),
       body: caseDetails == null
           ? const Center(child: CircularProgressIndicator())
-          : Padding(
+          : Container(
+              color: Colors.white, // Background color
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,9 +60,9 @@ class _CaseSummaryScreenState extends State<CaseSummaryScreen> {
                         const Text(
                           'Case Summary',
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 0, 51, 102), // Dark blue color
+                            color: Color.fromARGB(255, 0, 51, 102),
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -70,24 +78,32 @@ class _CaseSummaryScreenState extends State<CaseSummaryScreen> {
                     ),
                   ),
                   // Details Box
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(8),
+                  Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildDetailRow('Complainant Name', caseDetails!['complainantName']),
-                        _buildDetailRow('Date of Report', caseDetails!['dateOfReport']),
-                        _buildDetailRow('Incident Details', caseDetails!['incidentDetails']),
-                        _buildDetailRow('Date of Incident', caseDetails!['dateOfIncident']),
-                        _buildDetailRow('Time of Incident', caseDetails!['timeOfIncident']),
-                        _buildDetailRow('Address', caseDetails!['address']),
-                        _buildDetailRow('Phone Number', caseDetails!['phoneNumber']),
-                        // Add more fields as necessary
-                      ],
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildDetailRow(
+                              Icons.person, 'Complainant Name', caseDetails!['complainantName']),
+                          _buildDetailRow(
+                              Icons.date_range, 'Date of Report', caseDetails!['dateOfReport']),
+                          _buildDetailRow(
+                              Icons.description, 'Incident Details', caseDetails!['incidentDetails']),
+                          _buildDetailRow(
+                              Icons.calendar_today, 'Date of Incident', caseDetails!['dateOfIncident']),
+                          _buildDetailRow(
+                              Icons.access_time, 'Time of Incident', caseDetails!['timeOfIncident']),
+                          _buildDetailRow(Icons.location_on, 'Address', caseDetails!['address']),
+                          _buildDetailRow(
+                              Icons.phone, 'Phone Number', caseDetails!['phoneNumber']),
+                          // Add more fields as necessary
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -97,18 +113,20 @@ class _CaseSummaryScreenState extends State<CaseSummaryScreen> {
   }
 
   // Helper method to create each detail row
-  Widget _buildDetailRow(String fieldName, String fieldValue) {
+  Widget _buildDetailRow(IconData icon, String fieldName, String fieldValue) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Icon(icon, color: const Color.fromARGB(255, 0, 51, 102)), // Icon color
+          const SizedBox(width: 8),
           Text(
             '$fieldName: ',
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
-              color: Color.fromARGB(255, 51, 51, 51), // Dark gray color for field name
+              color: Color.fromARGB(255, 51, 51, 51),
             ),
           ),
           Expanded(
@@ -116,7 +134,7 @@ class _CaseSummaryScreenState extends State<CaseSummaryScreen> {
               fieldValue,
               style: const TextStyle(
                 fontSize: 16,
-                color: Color.fromARGB(255, 77, 77, 77), // Slightly lighter gray for value
+                color: Color.fromARGB(255, 77, 77, 77),
               ),
             ),
           ),

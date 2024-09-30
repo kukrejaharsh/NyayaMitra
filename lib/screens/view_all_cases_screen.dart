@@ -57,7 +57,9 @@ class _ViewAllCasesScreenState extends State<ViewAllCasesScreen> {
           .get();
 
       setState(() {
-        complaintList = nameQuerySnapshot.docs;
+        complaintList = nameQuerySnapshot.docs.isNotEmpty
+            ? nameQuerySnapshot.docs
+            : []; // Update to an empty list if no results found
       });
     } else {
       setState(() {
@@ -92,10 +94,11 @@ class _ViewAllCasesScreenState extends State<ViewAllCasesScreen> {
     final String incidentDetails = data['incidentDetails'].toString();
 
     return Card(
-      elevation: 3,
+      elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -112,14 +115,14 @@ class _ViewAllCasesScreenState extends State<ViewAllCasesScreen> {
                     style: const TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.bold,
-                      fontSize: 16, // Increased font size
+                      fontSize: 16,
                       decoration: TextDecoration.underline,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Row(
               children: [
                 const Text(
@@ -134,7 +137,7 @@ class _ViewAllCasesScreenState extends State<ViewAllCasesScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Row(
               children: [
                 const Text(
@@ -147,7 +150,7 @@ class _ViewAllCasesScreenState extends State<ViewAllCasesScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -173,7 +176,14 @@ class _ViewAllCasesScreenState extends State<ViewAllCasesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('View All Cases'),
+        title: const Text('View All Cases',
+        style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 227, 227, 247),
+                          ),
+        ),
+        backgroundColor: const Color.fromARGB(255, 0, 51, 102),
       ),
       body: Column(
         children: [
@@ -220,10 +230,26 @@ class _ViewAllCasesScreenState extends State<ViewAllCasesScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
                           child: Center(
                             child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                              ),
                               onPressed: () {
-                                _fetchLatestComplaints(); // Fetch all complaints again
+                                // Fetch all complaints when button is pressed
+                                _fetchLatestComplaints(); // Fetch latest complaints
+                                setState(() {
+                                  complaintList = originalComplaintList; // Update list to show all complaints
+                                });
                               },
-                              child: const Text('Show All Complaints'),
+                              child: const Text(
+                                'Show All Complaints',
+                                style: TextStyle(fontSize: 16, 
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,),
+                              ),
                             ),
                           ),
                         );

@@ -13,15 +13,19 @@ class ComplaintInputScreen extends StatefulWidget {
 }
 
 class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
-  final TextEditingController _complainantNameController = TextEditingController();
+  final TextEditingController _complainantNameController =
+      TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _firNumberController = TextEditingController();
-  final TextEditingController _fathersHusbandsNameController = TextEditingController();
+  final TextEditingController _fathersHusbandsNameController =
+      TextEditingController();
   final TextEditingController _occupationController = TextEditingController();
-  final TextEditingController _incidentDetailsController = TextEditingController(); // Incident Details Controller
-   final TextEditingController _sectionsAppliedController = TextEditingController(); // Sections Applied Controller
+  final TextEditingController _incidentDetailsController =
+      TextEditingController(); // Incident Details Controller
+  final TextEditingController _sectionsAppliedController =
+      TextEditingController(); // Sections Applied Controller
 
   final FlutterTts _flutterTts = FlutterTts();
   late stt.SpeechToText _speechToText;
@@ -75,7 +79,8 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
               _incidentDetailsController.text = val.recognizedWords;
               break;
             case 'sectionsApplied':
-              _sectionsAppliedController.text = val.recognizedWords; // Added for Sections Applied
+              _sectionsAppliedController.text =
+                  val.recognizedWords; // Added for Sections Applied
               break;
           }
         });
@@ -89,7 +94,6 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
     });
     _speechToText.stop();
   }
-  
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -131,82 +135,84 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
     }
   }
 
-  
-
   bool _isValidPhoneNumber(String phoneNumber) {
     final RegExp phoneRegExp = RegExp(r'^\d{10}$');
     return phoneRegExp.hasMatch(phoneNumber);
   }
 
- void _submitComplaint() {
-  if (_complainantNameController.text.isNotEmpty &&
-      _dobOfComplainant != null &&
-      _dateOfIncident != null &&
-      _timeOfIncident != null &&
-      _locationController.text.isNotEmpty &&
-      _addressController.text.isNotEmpty &&
-      _incidentDetailsController.text.isNotEmpty  && // Check Incident Details
-      _sectionsAppliedController.text.isNotEmpty && // Check Sections Applied
-      _isValidPhoneNumber(_phoneNumberController.text) &&
-      _firNumberController.text.isNotEmpty &&
-      _fathersHusbandsNameController.text.isNotEmpty &&
-      _occupationController.text.isNotEmpty) {
+  void _submitComplaint() {
+    if (_complainantNameController.text.isNotEmpty &&
+        _dobOfComplainant != null &&
+        _dateOfIncident != null &&
+        _timeOfIncident != null &&
+        _locationController.text.isNotEmpty &&
+        _addressController.text.isNotEmpty &&
+        _incidentDetailsController.text.isNotEmpty && // Check Incident Details
+        _sectionsAppliedController.text.isNotEmpty && // Check Sections Applied
+        _isValidPhoneNumber(_phoneNumberController.text) &&
+        _firNumberController.text.isNotEmpty &&
+        _fathersHusbandsNameController.text.isNotEmpty &&
+        _occupationController.text.isNotEmpty) {
+      // Save the complaint details to Firestore
+      _saveComplaintToFirestore();
 
-    // Save the complaint details to Firestore
-    _saveComplaintToFirestore();
-
-    // Navigate to the next screen after saving
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const ComplaintInputScreen()),
-    );
-    
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter all the mandatory details.')));
+      // Navigate to the next screen after saving
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ComplaintInputScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Please enter all the mandatory details.')));
+    }
   }
-}
+
   void _saveComplaintToFirestore() async {
-  final Map<String, dynamic> complaintData = {
-    'complainantName': _complainantNameController.text.trim(),
-    'complainantDob': _dobOfComplainant != null 
-        ? DateFormat('dd-MM-yyyy').format(_dobOfComplainant!) 
-        : 'NA',
-    'gender': _selectedGender,  // Save selected gender
-    'location': _locationController.text.trim(),
-    'address': _addressController.text.trim(),
-    'phoneNumber': _phoneNumberController.text.trim(),
-    'firNumber': _firNumberController.text.trim(),
-    'dateOfReport': _dateOfReport,
-    'fathersHusbandsName': _fathersHusbandsNameController.text.trim(),
-    'occupation': _occupationController.text.trim(),
-    'sectionsApplied': _sectionsAppliedController.text.trim(), // Save Sections Applied
-    
-    // Save incident details in separate fields
-    'dateOfIncident': _dateOfIncident != null 
-        ? DateFormat('dd-MM-yyyy').format(_dateOfIncident!) 
-        : 'NA',
-    'timeOfIncident': _timeOfIncident != null 
-        ? _timeOfIncident!.format(context) 
-        : 'NA',
-    'incidentDetails': _incidentDetailsController.text.trim(),  // Incident details as separate field
-  };
+    final Map<String, dynamic> complaintData = {
+      'complainantName': _complainantNameController.text.trim(),
+      'complainantDob': _dobOfComplainant != null
+          ? DateFormat('dd-MM-yyyy').format(_dobOfComplainant!)
+          : 'NA',
+      'gender': _selectedGender, // Save selected gender
+      'location': _locationController.text.trim(),
+      'address': _addressController.text.trim(),
+      'phoneNumber': _phoneNumberController.text.trim(),
+      'firNumber': _firNumberController.text.trim(),
+      'dateOfReport': _dateOfReport,
+      'fathersHusbandsName': _fathersHusbandsNameController.text.trim(),
+      'occupation': _occupationController.text.trim(),
+      'sectionsApplied':
+          _sectionsAppliedController.text.trim(), // Save Sections Applied
 
-  try {
-    await FirebaseFirestore.instance.collection('complaints').add(complaintData);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Complaint successfully saved!')),
-    );
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Failed to save complaint.')),
-    );
+      // Save incident details in separate fields
+      'dateOfIncident': _dateOfIncident != null
+          ? DateFormat('dd-MM-yyyy').format(_dateOfIncident!)
+          : 'NA',
+      'timeOfIncident':
+          _timeOfIncident != null ? _timeOfIncident!.format(context) : 'NA',
+      'incidentDetails': _incidentDetailsController.text
+          .trim(), // Incident details as separate field
+    };
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('complaints')
+          .add(complaintData);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Complaint successfully saved!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to save complaint.')),
+      );
+    }
   }
-}
+
   int _calculateAge() {
     if (_dobOfComplainant == null) return 0;
     int age = DateTime.now().year - _dobOfComplainant!.year;
-    if (DateTime.now().isBefore(DateTime(_dobOfComplainant!.year, _dobOfComplainant!.month, _dobOfComplainant!.day))) {
+    if (DateTime.now().isBefore(DateTime(_dobOfComplainant!.year,
+        _dobOfComplainant!.month, _dobOfComplainant!.day))) {
       age--;
     }
     return age;
@@ -218,284 +224,326 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
       await _flutterTts.setSpeechRate(0.5);
       await _flutterTts.speak(_incidentDetailsController.text);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please enter the incident details first')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Please enter the incident details first')));
     }
   }
-  
-    Future<void> _navigateToSectionSuggestion() async {
+
+  Future<void> _navigateToSectionSuggestion() async {
     final selectedSection = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const SectionSuggestionScreen()),
     );
     if (selectedSection != null) {
       setState(() {
-        _sectionsAppliedController.text = selectedSection; // Update the text field with selected section
+        _sectionsAppliedController.text =
+            selectedSection; // Update the text field with selected section
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(title: const Text('Enter Complaint Details')),
-    body: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // FIR Registration Form Title with Underline
-            const Text(
-              'FIR Registration Form',
-              style: TextStyle(
-                fontSize: 20, 
-                fontWeight: FontWeight.bold, 
-                decoration: TextDecoration.underline,
-              ),
-            ),
-            const SizedBox(height: 20),
-            // Date of Report
-            Text(
-              'Date of Report: $_dateOfReport',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            const SizedBox(height: 10),
-            // FIR Number Input
-            _buildTextField(
-              label: 'FIR Number',
-              controller: _firNumberController,
-              field: 'firNumber',
-            ),
-            const SizedBox(height: 20),
-            // Complainant Details shifted to left
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Complainant Details',
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Enter Complaint Details',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Color.fromARGB(255, 227, 227, 247),
+          ),
+        ),
+        backgroundColor: const Color.fromARGB(255, 0, 51, 102), // Dark blue
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // FIR Registration Form Title with Underline
+              const Text(
+                'FIR Registration Form',
                 style: TextStyle(
-                  fontSize: 18, 
-                  fontWeight: FontWeight.bold, 
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            // Complainant Name Input
-            _buildTextField(
-              label: 'Complainant Name',
-              controller: _complainantNameController,
-              field: 'name',
-            ),
-            const SizedBox(height: 20),
-            // Complainant Date of Birth Input
-            _buildDatePicker(
-              label: 'Date of Birth',
-              selectedDate: _dobOfComplainant,
-              onTap: () => _selectDate(context),
-            ),
-            const SizedBox(height: 10), // Add space before the age display
-
-            // Display calculated age
-            Text(
-              'Age: ${_calculateAge()} years old',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+              const SizedBox(height: 20),
+              // Date of Report
+              Text(
+                'Date of Report: $_dateOfReport',
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
-            ),
-            const SizedBox(height: 20), // Add some spacing after the age display
-
-            // Gender Selection
-            const Text(
-              'Gender',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            DropdownButton<String>(
-              value: _selectedGender,
-              items: <String>['Male', 'Female', 'Other']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedGender = newValue!;
-                });
-              },
-            ),
-            const SizedBox(height: 20),
-            // Address Input
-            _buildTextField(
-              label: 'Address',
-              controller: _addressController,
-              field: 'address',
-            ),
-            const SizedBox(height: 20),
-            // Phone Number Input
-            _buildTextField(
-              label: 'Phone Number',
-              controller: _phoneNumberController,
-              field: 'phoneNumber',
-              keyboardType: TextInputType.phone,
-            ),
-            const SizedBox(height: 20),
-            // Father's/Husband's Name Input
-            _buildTextField(
-              label: 'Father\'s/Husband\'s Name',
-              controller: _fathersHusbandsNameController,
-              field: 'fathersHusbandsName',
-            ),
-            const SizedBox(height: 20),
-            // Occupation Input
-            _buildTextField(
-              label: 'Occupation',
-              controller: _occupationController,
-              field: 'occupation',
-            ),
-            const SizedBox(height: 20),
-            // Complainant Details shifted to left
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Incident Details',
-                style: TextStyle(
-                  fontSize: 18, 
-                  fontWeight: FontWeight.bold, 
+              const SizedBox(height: 10),
+              // FIR Number Input
+              _buildTextField(
+                label: 'FIR Number',
+                controller: _firNumberController,
+                field: 'firNumber',
+              ),
+              const SizedBox(height: 20),
+              // Complainant Details shifted to left
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Complainant Details',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            // Date of Incident Input
-            _buildDatePicker(
-              label: 'Date of Incident',
-              selectedDate: _dateOfIncident,
-              onTap: () => _selectIncidentDate(context),
-            ),
-            const SizedBox(height: 20),
-            // Time of Incident Input
-            _buildTimePicker(
-              label: 'Time of Incident',
-              selectedTime: _timeOfIncident,
-              onTap: () => _selectTime(context),
-            ),
-            const SizedBox(height: 20),
-            // Location Input
-            _buildTextField(
-              label: 'Location Of Incident',
-              controller: _locationController,
-              field: 'location',
-            ),
-            const SizedBox(height: 20),
-            // Incident Details Input
-            _buildTextField(
-              label: 'Incident Details',
-              controller: _incidentDetailsController,
-              field: 'incidentDetails',
-              maxLines: 5,
-            ),
-            const SizedBox(height: 20),
-            // Sections Applied Input
-            _buildSectionsPicker(
-              label: 'Sections Applied',
-              selectedSection: _sectionsAppliedController.text,
-              onTap: _navigateToSectionSuggestion, // Navigate to section suggestion
-            ),
-            const SizedBox(height: 20),
-            // Speak Complaint Button
-            ElevatedButton(
-              onPressed: _speakComplaint,
-              child: const Text('Speak Complaint'),
-            ),
-            const SizedBox(height: 20),
-            // Submit Complaint Button
-            ElevatedButton(
-              onPressed: _submitComplaint,
-              child: const Text('Submit Complaint'),
-            ),
-          ],
+              const SizedBox(height: 20),
+              // Complainant Name Input
+              _buildTextField(
+                label: 'Complainant Name',
+                controller: _complainantNameController,
+                field: 'name',
+              ),
+              const SizedBox(height: 20),
+              // Complainant Date of Birth Input
+              _buildDatePicker(
+                label: 'Date of Birth',
+                selectedDate: _dobOfComplainant,
+                onTap: () => _selectDate(context),
+              ),
+              const SizedBox(height: 10), // Add space before the age display
+
+              // Display calculated age
+              Text(
+                'Age: ${_calculateAge()} years old',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                  height: 20), // Add some spacing after the age display
+
+              // Gender Selection
+              const Text(
+                'Gender',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              DropdownButton<String>(
+                value: _selectedGender,
+                items: <String>['Male', 'Female', 'Other']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedGender = newValue!;
+                  });
+                },
+              ),
+              const SizedBox(height: 20),
+              // Address Input
+              _buildTextField(
+                label: 'Address',
+                controller: _addressController,
+                field: 'address',
+              ),
+              const SizedBox(height: 20),
+              // Phone Number Input
+              _buildTextField(
+                label: 'Phone Number',
+                controller: _phoneNumberController,
+                field: 'phoneNumber',
+                keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 20),
+              // Father's/Husband's Name Input
+              _buildTextField(
+                label: 'Father\'s/Husband\'s Name',
+                controller: _fathersHusbandsNameController,
+                field: 'fathersHusbandsName',
+              ),
+              const SizedBox(height: 20),
+              // Occupation Input
+              _buildTextField(
+                label: 'Occupation',
+                controller: _occupationController,
+                field: 'occupation',
+              ),
+              const SizedBox(height: 20),
+              // Complainant Details shifted to left
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Incident Details',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Date of Incident Input
+              _buildDatePicker(
+                label: 'Date of Incident',
+                selectedDate: _dateOfIncident,
+                onTap: () => _selectIncidentDate(context),
+              ),
+              const SizedBox(height: 20),
+              // Time of Incident Input
+              _buildTimePicker(
+                label: 'Time of Incident',
+                selectedTime: _timeOfIncident,
+                onTap: () => _selectTime(context),
+              ),
+              const SizedBox(height: 20),
+              // Location Input
+              _buildTextField(
+                label: 'Location Of Incident',
+                controller: _locationController,
+                field: 'location',
+              ),
+              const SizedBox(height: 20),
+              // Incident Details Input
+              _buildTextField(
+                label: 'Incident Details',
+                controller: _incidentDetailsController,
+                field: 'incidentDetails',
+                maxLines: 5,
+              ),
+              const SizedBox(height: 20),
+              // Sections Applied Input
+              _buildSectionsPicker(
+                label: 'Sections Applied',
+                selectedSection: _sectionsAppliedController.text,
+                onTap:
+                    _navigateToSectionSuggestion, // Navigate to section suggestion
+              ),
+              const SizedBox(height: 20),
+              // Speak Complaint Button
+              ElevatedButton.icon(
+                onPressed: _speakComplaint,
+                icon: const Icon(Icons.volume_up), // Add an icon for speaking
+                label: const Text('Speak Complaint'),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blue, // Button color
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  textStyle: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // Submit Complaint Button
+              ElevatedButton.icon(
+                onPressed: _submitComplaint,
+                icon: const Icon(Icons.send), // Add an icon for submitting
+                label: const Text(
+                  'Submit Complaint',
+                ),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blue, // Button color
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  textStyle: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
+    );
   }
 
-
-
   Widget _buildTimePicker({
-  required String label,
-  required TimeOfDay? selectedTime,
-  required VoidCallback onTap,
-}) {
-  return Container(
-    padding: const EdgeInsets.all(8.0),
-    decoration: BoxDecoration(
-      border: Border.all(color: Colors.grey),
-      borderRadius: BorderRadius.circular(8.0),
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          '$label: ${selectedTime != null ? selectedTime.format(context) : 'Select Time'}',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        ElevatedButton(
-          onPressed: onTap,
-          child: const Text('Pick Time'),
-        ),
-      ],
-    ),
-  );
-}
+    required String label,
+    required TimeOfDay? selectedTime,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            '$label: ${selectedTime != null ? selectedTime.format(context) : 'Select Time'}',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          IconButton(
+            onPressed: onTap,
+            icon:
+                const Icon(Icons.access_time, color: Colors.blue), // Clock icon
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildTextField({
-  required String label,
-  required TextEditingController controller,
-  required String field,
-  TextInputType keyboardType = TextInputType.text,
-  int maxLines = 1,
-}) {
-  return Container(
-    padding: const EdgeInsets.all(8.0),
-    decoration: BoxDecoration(
-      border: Border.all(color: Colors.grey),
-      borderRadius: BorderRadius.circular(8.0),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: controller,
-                keyboardType: keyboardType,
-                maxLines: maxLines,
+    required String label,
+    required TextEditingController controller,
+    required String field,
+    TextInputType keyboardType = TextInputType.text,
+    int maxLines = 1,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  keyboardType: keyboardType,
+                  maxLines: maxLines,
+                ),
               ),
-            ),
-            IconButton(
-              icon: Icon(
-                _isListening && _currentField == field ? Icons.mic : Icons.mic_none,
-                color: _isListening && _currentField == field ? Colors.red : Colors.grey,
+              IconButton(
+                icon: Icon(
+                  _isListening && _currentField == field
+                      ? Icons.mic
+                      : Icons.mic_none,
+                  color: _isListening && _currentField == field
+                      ? Colors.red
+                      : Colors.grey,
+                ),
+                onPressed: () {
+                  if (_isListening && _currentField == field) {
+                    _stopListening();
+                  } else {
+                    _startListening(field);
+                  }
+                },
               ),
-              onPressed: () {
-                if (_isListening && _currentField == field) {
-                  _stopListening();
-                } else {
-                  _startListening(field);
-                }
-              },
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
-
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildDatePicker({
     required String label,
@@ -515,16 +563,16 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
             '$label: ${selectedDate != null ? DateFormat('dd-MM-yyyy').format(selectedDate) : 'Select Date'}',
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
-          ElevatedButton(
+          IconButton(
             onPressed: onTap,
-            child: const Text('Pick Date'),
+            icon: const Icon(Icons.calendar_today,
+                color: Colors.blue), // Calendar icon
           ),
         ],
       ),
     );
   }
 }
-
 
 Widget _buildSectionsPicker({
   required String label,
@@ -551,10 +599,22 @@ Widget _buildSectionsPicker({
           ),
         ),
         const SizedBox(width: 8), // Add some spacing between text and button
-        ElevatedButton(
-          onPressed: onTap,
-          child: const Text('Pick Section'),
-        ),
+        ElevatedButton.icon(
+  onPressed: onTap,
+  icon: const Icon(Icons.library_books, color: Colors.white),  // Add an icon
+  label: const Text(
+    'Pick Section',
+    style: TextStyle(fontWeight: FontWeight.bold,
+    color: Colors.white),
+  ),
+  style: ElevatedButton.styleFrom(
+    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20), // Add padding
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10), // Rounded corners
+    ),
+    backgroundColor: const Color.fromARGB(255, 2, 49, 96), // Dark blue color
+  ),
+),
       ],
     ),
   );

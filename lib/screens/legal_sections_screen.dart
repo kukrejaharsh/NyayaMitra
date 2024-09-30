@@ -1460,7 +1460,14 @@ Widget build(BuildContext context) {
 
   return Scaffold(
     appBar: AppBar(
-      title: const Text('Legal Sections'),
+      title: const Text('Legal Sections',
+        style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 227, 227, 247),
+                          ),
+        ),
+        backgroundColor: const Color.fromARGB(255, 0, 51, 102),
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(56.0),
         child: Padding(
