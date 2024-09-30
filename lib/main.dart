@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:legal_info_app/constants/theme.dart'; // Import theme.dart
-import 'package:legal_info_app/screens/dashboard_screen.dart';
 import 'package:legal_info_app/services/auth_service.dart';// Import ThemeNotifier
 import 'package:legal_info_app/screens/login_screen.dart';
 import 'package:provider/provider.dart';

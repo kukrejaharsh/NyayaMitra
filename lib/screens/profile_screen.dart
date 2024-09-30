@@ -59,9 +59,9 @@ Widget build(BuildContext context) {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Display Default Profile Picture
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 50,
-                  backgroundImage: const AssetImage('assets/default_profile_icon.png'),
+                  backgroundImage: AssetImage('assets/default_profile_icon.png'),
                 ),
                 const SizedBox(height: 16),
                 const SizedBox(height: 30),
@@ -72,12 +72,12 @@ Widget build(BuildContext context) {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: Colors.grey),
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
                         color: Colors.black12,
                         blurRadius: 8.0,
                         spreadRadius: 2.0,
-                        offset: const Offset(2.0, 2.0),
+                        offset: Offset(2.0, 2.0),
                       ),
                     ],
                     color: Colors.white,

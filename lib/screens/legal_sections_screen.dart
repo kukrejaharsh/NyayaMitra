@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_tts/flutter_tts.dart'; // For text-to-speech
-import '../widgets/data_table_widget.dart'; // Import the DataTableWidget
+// Import the DataTableWidget
 
 class LegalSectionsScreen extends StatefulWidget {
   const LegalSectionsScreen({super.key});

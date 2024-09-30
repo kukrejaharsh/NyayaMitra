@@ -16,32 +16,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
   late Timer _timer;
   int _currentPage = 0;
 
-  @override
+ @override
   void initState() {
     super.initState();
-    _pageController = PageController();
-    _startAutoScroll();
-  }
+    _pageController = PageController(initialPage: _currentPage);
 
-  void _startAutoScroll() {
-    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      if (_currentPage < 1) {
+    // Start the timer to automatically slide images
+    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
+      if (_currentPage < 2) {
         _currentPage++;
       } else {
         _currentPage = 0;
       }
+
       _pageController.animateToPage(
         _currentPage,
         duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
+        curve: Curves.easeIn,
       );
     });
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
     _timer.cancel();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -69,18 +68,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
       drawer: const DrawerMenu(),
       body: Column(
         children: [
-          // Slider for Indian flag and logo
-          Container(
+                SizedBox(
             height: 150, // Set height for the slider
             child: PageView(
               controller: _pageController,
               children: [
                 Image.asset('assets/indian_flag.png', fit: BoxFit.cover),
-                Image.asset('assets/independence_logo.png', fit: BoxFit.fill),
+                Image.asset('assets/lion_logo.png', fit: BoxFit.contain),
+                Image.asset('assets/law_logo.png', fit: BoxFit.contain),
               ],
             ),
           ),
-          const SizedBox(height: 20),
           // Welcome message
           const Text(
             'Welcome to NyayaMitra',

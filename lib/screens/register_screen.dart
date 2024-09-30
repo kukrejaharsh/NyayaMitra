@@ -5,6 +5,8 @@ import '../services/auth_service.dart';
 import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
@@ -156,9 +158,9 @@ Future<void> _register() async {
           child: Column(
             children: [
               // Display Default Profile Picture
-              CircleAvatar(
+              const CircleAvatar(
                 radius: 50,
-                backgroundImage: const AssetImage('assets/default_profile_icon.png'),
+                backgroundImage: AssetImage('assets/default_profile_icon.png'),
               ),
               const SizedBox(height: 16),
               // Input fields enclosed in a Card Widget

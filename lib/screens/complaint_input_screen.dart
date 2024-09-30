@@ -138,67 +138,71 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
     return phoneRegExp.hasMatch(phoneNumber);
   }
 
-  void _submitComplaint() {
-    if (_complainantNameController.text.isNotEmpty &&
-        _dobOfComplainant != null &&
-        _dateOfIncident != null &&
-        _timeOfIncident != null &&
-        _locationController.text.isNotEmpty &&
-        _addressController.text.isNotEmpty &&
-        _incidentDetailsController.text.isNotEmpty  && // Check Incident Details
-        _sectionsAppliedController.text.isNotEmpty && // Check Sections Applied
-        _isValidPhoneNumber(_phoneNumberController.text) &&
-        _firNumberController.text.isNotEmpty &&
-        _fathersHusbandsNameController.text.isNotEmpty &&
-        _occupationController.text.isNotEmpty) {
+ void _submitComplaint() {
+  if (_complainantNameController.text.isNotEmpty &&
+      _dobOfComplainant != null &&
+      _dateOfIncident != null &&
+      _timeOfIncident != null &&
+      _locationController.text.isNotEmpty &&
+      _addressController.text.isNotEmpty &&
+      _incidentDetailsController.text.isNotEmpty  && // Check Incident Details
+      _sectionsAppliedController.text.isNotEmpty && // Check Sections Applied
+      _isValidPhoneNumber(_phoneNumberController.text) &&
+      _firNumberController.text.isNotEmpty &&
+      _fathersHusbandsNameController.text.isNotEmpty &&
+      _occupationController.text.isNotEmpty) {
 
-      // Save the complaint details to Firestore
-      _saveComplaintToFirestore();
+    // Save the complaint details to Firestore
+    _saveComplaintToFirestore();
 
-      // Navigate to the next screen after saving
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ComplaintInputScreen()),
-      );
-      
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please enter all the mandatory details.')));
-    }
+    // Navigate to the next screen after saving
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ComplaintInputScreen()),
+    );
+    
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter all the mandatory details.')));
   }
-
+}
   void _saveComplaintToFirestore() async {
-    final Map<String, dynamic> complaintData = {
-      'complainantName': _complainantNameController.text.trim(),
-      'complainantDob': _dobOfComplainant != null 
-          ? DateFormat('dd-MM-yyyy').format(_dobOfComplainant!) 
-          : 'NA',
-      'gender': _selectedGender,  // Save selected gender
-      'complaintDetails': 'Date of Incident: ${DateFormat('dd-MM-yyyy').format(_dateOfIncident!)}' +
-          '\nTime of Incident: ${_timeOfIncident!.format(context)}' +
-          '\nIncident Details: ${_incidentDetailsController.text.trim()}', // Include Incident Details
-      'location': _locationController.text.trim(),
-      'address': _addressController.text.trim(),
-      'phoneNumber': _phoneNumberController.text.trim(),
-      'firNumber': _firNumberController.text.trim(),
-      'dateOfReport': _dateOfReport,
-      'fathersHusbandsName': _fathersHusbandsNameController.text.trim(),
-      'occupation': _occupationController.text.trim(),
-      'sectionsApplied': _sectionsAppliedController.text.trim(), // Save Sections Applied
-    };
+  final Map<String, dynamic> complaintData = {
+    'complainantName': _complainantNameController.text.trim(),
+    'complainantDob': _dobOfComplainant != null 
+        ? DateFormat('dd-MM-yyyy').format(_dobOfComplainant!) 
+        : 'NA',
+    'gender': _selectedGender,  // Save selected gender
+    'location': _locationController.text.trim(),
+    'address': _addressController.text.trim(),
+    'phoneNumber': _phoneNumberController.text.trim(),
+    'firNumber': _firNumberController.text.trim(),
+    'dateOfReport': _dateOfReport,
+    'fathersHusbandsName': _fathersHusbandsNameController.text.trim(),
+    'occupation': _occupationController.text.trim(),
+    'sectionsApplied': _sectionsAppliedController.text.trim(), // Save Sections Applied
+    
+    // Save incident details in separate fields
+    'dateOfIncident': _dateOfIncident != null 
+        ? DateFormat('dd-MM-yyyy').format(_dateOfIncident!) 
+        : 'NA',
+    'timeOfIncident': _timeOfIncident != null 
+        ? _timeOfIncident!.format(context) 
+        : 'NA',
+    'incidentDetails': _incidentDetailsController.text.trim(),  // Incident details as separate field
+  };
 
-    try {
-      await FirebaseFirestore.instance.collection('complaints').add(complaintData);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Complaint successfully saved!')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to save complaint.')),
-      );
-    }
+  try {
+    await FirebaseFirestore.instance.collection('complaints').add(complaintData);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Complaint successfully saved!')),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Failed to save complaint.')),
+    );
   }
-
+}
   int _calculateAge() {
     if (_dobOfComplainant == null) return 0;
     int age = DateTime.now().year - _dobOfComplainant!.year;
@@ -222,7 +226,7 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
     Future<void> _navigateToSectionSuggestion() async {
     final selectedSection = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SectionSuggestionScreen()),
+      MaterialPageRoute(builder: (context) => const SectionSuggestionScreen()),
     );
     if (selectedSection != null) {
       setState(() {
@@ -447,34 +451,51 @@ class _ComplaintInputScreenState extends State<ComplaintInputScreen> {
 }
 
   Widget _buildTextField({
-    required String label,
-    required TextEditingController controller,
-    required String field,
-    TextInputType keyboardType = TextInputType.text,
-    int maxLines = 1,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-          TextField(
-            controller: controller,
-            keyboardType: keyboardType,
-            maxLines: maxLines,
-            onTap: () {
-              _startListening(field);
-            },
-          ),
-        ],
-      ),
-    );
-  }
+  required String label,
+  required TextEditingController controller,
+  required String field,
+  TextInputType keyboardType = TextInputType.text,
+  int maxLines = 1,
+}) {
+  return Container(
+    padding: const EdgeInsets.all(8.0),
+    decoration: BoxDecoration(
+      border: Border.all(color: Colors.grey),
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: controller,
+                keyboardType: keyboardType,
+                maxLines: maxLines,
+              ),
+            ),
+            IconButton(
+              icon: Icon(
+                _isListening && _currentField == field ? Icons.mic : Icons.mic_none,
+                color: _isListening && _currentField == field ? Colors.red : Colors.grey,
+              ),
+              onPressed: () {
+                if (_isListening && _currentField == field) {
+                  _stopListening();
+                } else {
+                  _startListening(field);
+                }
+              },
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
 
   Widget _buildDatePicker({
     required String label,

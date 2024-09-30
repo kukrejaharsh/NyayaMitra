@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:legal_info_app/constants/theme.dart';
 import 'package:legal_info_app/screens/login_screen.dart';
+import 'package:legal_info_app/screens/view_all_cases_screen.dart';
 import 'package:provider/provider.dart';
 import '../screens/profile_screen.dart';
 import '../screens/complaint_input_screen.dart';
 import '../screens/legal_sections_screen.dart';
-import '../screens/case_summary_screen.dart';
 import '../services/auth_service.dart'; // Import your AuthService for sign out
 
 
@@ -46,7 +46,7 @@ class DrawerMenu extends StatelessWidget {
             leading: const Icon(Icons.list),
             title: const Text('View All Cases'),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const CaseSummaryScreen()));
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const ViewAllCasesScreen()));
             },
           ),
           // Settings Dropdown Menu

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 class SectionSuggestionScreen extends StatefulWidget {
-  SectionSuggestionScreen({super.key});
+  const SectionSuggestionScreen({super.key});
 
   @override
   _SectionSuggestionScreenState createState() => _SectionSuggestionScreenState();
@@ -53,7 +53,7 @@ class _SectionSuggestionScreenState extends State<SectionSuggestionScreen> {
     },
   ];
 
-  List<String> _selectedSections = [];
+  final List<String> _selectedSections = [];
 
   Future<void> _speakSection(String section) async {
     await _flutterTts.setLanguage("en-IN");
