@@ -146,7 +146,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 227, 227, 247),
+                            color: Color.fromRGBO(227, 227, 247, 1),
                           ),
         ),
         backgroundColor: const Color.fromARGB(255, 0, 51, 102),),
@@ -194,7 +194,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       _buildTextField(_phoneNumberController, 'Phone Number', keyboardType: TextInputType.phone),
                       _buildTextField(_stationIdController, 'Station ID', keyboardType: TextInputType.number),
                       _buildTextField(_rankController, 'Rank'),
-                      _buildTextField(_batchNumberController, 'Batch Number', keyboardType: TextInputType.number), // Added batch number field
                     ],
                   ),
                 ),
