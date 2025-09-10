@@ -1,0 +1,77 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class CaseModel {
+  final String caseId;
+  final String title;
+  final String description;
+  final String caseType;
+  final String? applicableSections;
+  final String courtName;
+  final String clientId;
+  final String? lawyerId;
+  final String status; // "pending" | "active" | "closed" | "won"
+  final String lawyerRequestStatus; // "none" | "sent" | "accepted" | "rejected"
+  final DateTime createdAt;
+  final DateTime dueDate;
+  final DateTime hearingDate;
+  final DateTime lastUpdated;
+  final String priority; //"low" | "medium" | "high"
+
+  CaseModel({
+    required this.caseId,
+    required this.title,
+    required this.description,
+    required this.caseType,
+    this.applicableSections,
+    required this.courtName,
+    required this.clientId,
+    this.lawyerId = null,
+    required this.status,
+    this.lawyerRequestStatus = "none",
+    required this.createdAt,
+    required this.dueDate,
+    required this.hearingDate,
+    required this.lastUpdated,
+    this.priority = "medium",
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      "caseId": caseId,
+      "title": title,
+      "description": description,
+      "caseType": caseType,
+      "applicableSections": applicableSections,
+      "courtName": courtName,
+      "clientId": clientId,
+      "lawyerId": lawyerId,
+      "status": status,
+      "lawyerRequestStatus": lawyerRequestStatus,
+      "createdAt": createdAt,
+      "dueDate": dueDate,
+      "hearingDate": hearingDate,
+      "lastUpdated": lastUpdated,
+      "priority": priority,
+    };
+  }
+
+  factory CaseModel.fromMap(String id, Map<String, dynamic> map) {
+    return CaseModel(
+      caseId: id,
+      title: map["title"] ?? "",
+      description: map["description"] ?? "",
+      caseType: map["caseType"] ?? "Other",
+      applicableSections: map["applicableSections"],
+      courtName: map["courtName"] ?? "",
+      clientId: map["clientId"] ?? "",
+      lawyerId: map["lawyerId"],
+      status: map["status"] ?? "open",
+      lawyerRequestStatus: map["lawyerRequestStatus"] ?? "none",
+      createdAt: (map["createdAt"] as Timestamp).toDate(),
+      dueDate: (map["dueDate"] as Timestamp).toDate(),
+      hearingDate: (map["hearingDate"] as Timestamp).toDate(),
+      lastUpdated: (map["lastUpdated"] as Timestamp).toDate(),
+      priority: map["priority"] ?? "medium",
+    );
+  }
+}

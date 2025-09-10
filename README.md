@@ -1,4 +1,4 @@
-# legal_info_app
+# NyayaMitra
 
 A new Flutter project.
 

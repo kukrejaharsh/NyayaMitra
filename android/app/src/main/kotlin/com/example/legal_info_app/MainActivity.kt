@@ -1,4 +1,4 @@
-package com.example.legal_info_app
+package com.example.NyayaMitra
 
 import io.flutter.embedding.android.FlutterActivity
 

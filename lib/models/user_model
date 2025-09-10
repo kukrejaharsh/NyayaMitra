@@ -1,0 +1,90 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class UserModel {
+  final String userId; // Always equals Firebase UID
+  final String name;
+  final String email;
+  final String phone;
+  final String role; // "client" | "lawyer" | "admin"
+  final String? profileImage;
+  final DateTime createdAt;
+  final bool notificationsEnabled;
+
+  // Lawyer-specific
+  final String? specialization;
+  final int totalCases;
+  final int activeCases;
+  final int casesWon;
+  final double fees;
+  final double rating;
+  final int ratingsCount;
+
+  UserModel({
+    required this.userId,
+    required this.name,
+    required this.email,
+    required this.phone,
+    required this.role,
+    this.profileImage,
+    required this.createdAt,
+    this.notificationsEnabled = true,
+
+    required this.specialization, 
+    this.totalCases = 0,
+    this.activeCases = 0,
+    this.casesWon = 0,
+    this.fees = 0,
+    this.rating = 0,
+    this.ratingsCount = 0,
+  });
+
+  /// ✅ Role-based alias
+  String get lawyerId => role == "lawyer" ? userId : "";
+  String get clientId => role == "client" ? userId : "";
+
+  Map<String, dynamic> toMap() {
+    return {
+      "userId": userId,
+      "name": name,
+      "email": email,
+      "phone": phone,
+      "role": role,
+      "profileImage": profileImage,
+      "createdAt": createdAt,
+      "notificationsEnabled": notificationsEnabled,
+      "specialization": specialization, 
+      "totalCases": totalCases,
+      "activeCases": activeCases,
+      "casesWon": casesWon,
+      "fees": fees,
+      "rating": rating,
+      "ratingsCount": ratingsCount,
+
+      /// 🔹 Include role-based field for querying later
+      if (role == "lawyer") "lawyerId": userId,
+      if (role == "client") "clientId": userId,
+    };
+  }
+
+  factory UserModel.fromMap(String id, Map<String, dynamic> map) {
+    return UserModel(
+      userId: id,
+      name: map["name"] ?? "",
+      email: map["email"] ?? "",
+      phone: map["phone"] ?? "",
+      role: map["role"] ?? "client",
+      profileImage: map["profileImage"],
+      createdAt: (map["createdAt"] is Timestamp)
+          ? (map["createdAt"] as Timestamp).toDate()
+          : (map["createdAt"] ?? DateTime.now()),
+      notificationsEnabled: map["notificationsEnabled"] ?? true,
+      specialization: map["specialization"], 
+      totalCases: map["totalCases"] ?? 0,
+      activeCases: map["activeCases"] ?? 0,
+      casesWon: map["casesWon"] ?? 0,
+      fees: (map["fees"] ?? 0).toDouble(),
+      rating: (map["rating"] ?? 0).toDouble(),
+      ratingsCount: map["ratingsCount"] ?? 0,
+    );
+  }
+}

@@ -1,0 +1,45 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class Review {
+  final String reviewId;
+  final String caseId;
+  final String clientId;
+  final String lawyerId;
+  final double rating;
+  final String comment;
+  final DateTime createdAt;
+
+  Review({
+    required this.reviewId,
+    required this.caseId,
+    required this.clientId,
+    required this.lawyerId,
+    required this.rating,
+    required this.comment,
+    required this.createdAt,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      "reviewId": reviewId,
+      "caseId": caseId,
+      "clientId": clientId,
+      "lawyerId": lawyerId,
+      "rating": rating,
+      "comment": comment,
+      "createdAt": createdAt,
+    };
+  }
+
+  factory Review.fromMap(String id, Map<String, dynamic> map) {
+    return Review(
+      reviewId: id,
+      caseId: map["caseId"] ?? "",
+      clientId: map["clientId"] ?? "",
+      lawyerId: map["lawyerId"] ?? "",
+      rating: (map["rating"] ?? 0).toDouble(),
+      comment: map["comment"] ?? "",
+      createdAt: (map["createdAt"] as Timestamp).toDate(),
+    );
+  }
+}

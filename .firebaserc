@@ -1,0 +1,9 @@
+{
+  "projects": {
+    "staging": "legal-info-app",
+    "default": "legal-info-app",
+    "initial": "nyaya-mitra-app"
+  },
+  "targets": {},
+  "etags": {}
+}

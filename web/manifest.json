@@ -1,6 +1,6 @@
 {
-    "name": "legal_info_app",
-    "short_name": "legal_info_app",
+    "name": "NyayaMitra",
+    "short_name": "NyayaMitra",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,0 +1,50 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class ChatMessage {
+  final String msgId;
+  final String caseId;
+  final String senderId;
+  final String receiverId;
+  final String message;
+  final DateTime timestamp;
+  final String messageType; // "text" | "image" | "file" | "voice"
+  final bool isRead;
+
+
+  ChatMessage({
+    required this.msgId,
+    required this.caseId,
+    required this.senderId,
+    required this.receiverId,
+    required this.message,
+    required this.timestamp,
+    required this.messageType,
+    this.isRead = false,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      "msgId": msgId,
+      "caseId": caseId,
+      "senderId": senderId,
+      "receiverId": receiverId,
+      "message": message,
+      "timestamp": timestamp,
+      "messageType": messageType,
+      "isRead": isRead,
+    };
+  }
+
+  factory ChatMessage.fromMap(String id, Map<String, dynamic> map) {
+    return ChatMessage(
+      msgId: id,
+      caseId: map["caseId"] ?? "",
+      senderId: map["senderId"] ?? "",
+      receiverId: map["receiverId"] ?? "",
+      message: map["message"] ?? "",
+      timestamp: (map["timestamp"] as Timestamp).toDate(),
+      messageType: map["messageType"] ?? "text",
+      isRead: map["isRead"] ?? false,
+    );
+  }
+}

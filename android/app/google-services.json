@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "603170471228",
-    "project_id": "legal-info-app",
-    "storage_bucket": "legal-info-app.appspot.com"
+    "project_number": "402149525141",
+    "project_id": "nyaya-mitra-app",
+    "storage_bucket": "nyaya-mitra-app.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:603170471228:android:1f47d24fdfc39602763239",
+        "mobilesdk_app_id": "1:402149525141:android:79c6526107cb4312ad7d9c",
         "android_client_info": {
-          "package_name": "com.example.legal_info_app"
+          "package_name": "com.example.NyayaMitra"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyD9NjXsEEhhXcsZ4_6EYhJFeoYAQl_jMSE"
+          "current_key": "AIzaSyDnPeF1zmE-Wug_whfv48ZVn0hd6E5sjn0"
         }
       ],
       "services": {
